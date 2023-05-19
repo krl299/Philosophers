@@ -1,5 +1,7 @@
 SRCS=	main.c	\
-		utils.c
+		utils.c	\
+		create.c\
+		clear_table.c
 
 OBJS=	${SRCS:.c=.o}
 

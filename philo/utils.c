@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:39:22 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/18 17:03:58 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/19 16:09:44 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,15 @@ int	ft_atoi(char *str, t_table *table)
 		nbr = (nbr * 10) + (str[i] - '0');
 		i++;
 	}
-	if (nbr > INT_MAX || nbr < INT_MIN)
+	if (nbr > INT_MAX || nbr < 0)
 		table->wrong_input = 1;
 	return (nbr);
+}
+
+long long	ft_get_time(void)
+{
+	struct timeval	time;
+
+	gettimeofday(&time, NULL);
+	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }

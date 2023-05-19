@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/18 17:24:21 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/19 16:41:29 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,50 +37,22 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		table->wrong_input = 1;
 }
 
-void	ft_create_forks(t_table *table, pthread_mutex_t *forks)
+void	*ft_philosophers_thread(void *arg)
 {
-	int	i;
+	t_philosopher *philosopher;
+	long long	time;
 
-	forks = malloc(sizeof(pthread_mutex_t) * table->num_philosophers);
-	if (!forks)
-		return ;
-	i = 0;
-	while (i < table->num_philosophers)
+	philosopher = (t_philosopher *)arg;
+	philosopher->last_meal_time = ft_get_time();
+	time = philosopher->last_meal_time - philosopher->table->start_time;
+	while (time < 0)
 	{
-		pthread_mutex_init(&forks[i], NULL);
-		i++;
+		philosopher->last_meal_time = ft_get_time();
+		time = philosopher->last_meal_time - philosopher->table->start_time;
 	}
-}
-
-void	*philosophers_thread(void *arg)
-{
-	(void)arg;
+	printf("Philosopher %i is here!!\n", philosopher->id);
+	printf("Philosopher time is %lli\n", time);
 	return (NULL);
-}
-
-void	ft_create_philosophers(t_table *table, \
-		t_philosopher *philosophers, pthread_mutex_t *forks)
-{
-	int	i;
-
-	philosophers = malloc(sizeof(t_philosopher) * table->num_philosophers);
-	if (!philosophers)
-		return ;
-	i = 0;
-	while (i < table->num_philosophers)
-	{
-		philosophers[i].id = i + 1;
-		philosophers[i].eat_count = 0;
-		philosophers[i].left_fork = &forks[i];
-		philosophers[i].right_fork = &forks[(i + 1) % table->num_philosophers];
-		gettimeofday(&philosophers[i].last_meal_time, NULL);
-		philosophers[i].is_live = 1;
-		pthread_cond_init(&philosophers[i].death_cond, NULL);
-		pthread_mutex_init(&philosophers[i].death_mutex, NULL);
-//		pthread_create(&philosophers[i].thread, NULL, \
-//		philosophers_thread, &philosophers[i]);
-		i++;
-	}	
 }
 
 void	ft_cycle_of_live(t_table *table)
@@ -91,19 +63,27 @@ void	ft_cycle_of_live(t_table *table)
 
 	forks = NULL;
 	philosophers = NULL;
-	ft_create_forks(table, forks);
-	ft_create_philosophers(table, philosophers, forks);
+	forks = ft_create_forks(table, forks);
+	philosophers = ft_create_philosophers(table, philosophers, forks);
 	i = 0;
 	while (i < table->num_philosophers)
 	{
 		pthread_join(philosophers[i].thread, NULL);
+		i++;
 	}
+	ft_clear_table(philosophers, forks, table);
+}
+
+static void	ft_leaks(void)
+{
+	system("leaks -q philo");
 }
 
 int	main(int argc, char **argv)
 {
 	t_table	table;
 
+	atexit(ft_leaks);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)
