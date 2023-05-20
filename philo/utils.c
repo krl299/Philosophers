@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:39:22 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/19 16:09:44 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/20 18:33:06 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,4 +40,9 @@ long long	ft_get_time(void)
 
 	gettimeofday(&time, NULL);
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
+}
+
+long long	ft_get_current_time(long long time)
+{
+	return (ft_get_time() - time);
 }

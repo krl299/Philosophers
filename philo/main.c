@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/19 16:41:29 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/20 20:52:59 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 			table->num_times_to_eat = ft_atoi(argv[5], table);
 		else
 			table->num_times_to_eat = -1;
+		table->deaths = 0;
+		printf("deaths:%d\n", table->deaths);
 	}
 	else
 		table->wrong_input = 1;
@@ -47,11 +49,27 @@ void	*ft_philosophers_thread(void *arg)
 	time = philosopher->last_meal_time - philosopher->table->start_time;
 	while (time < 0)
 	{
-		philosopher->last_meal_time = ft_get_time();
-		time = philosopher->last_meal_time - philosopher->table->start_time;
+		time = ft_get_current_time(philosopher->table->start_time);
+		philosopher->last_meal_time = time;
 	}
-	printf("Philosopher %i is here!!\n", philosopher->id);
-	printf("Philosopher time is %lli\n", time);
+	printf("Philosopher %i is here with time: %lli!!\n", philosopher->id, time);
+	
+	pthread_mutex_lock(philosopher->left_fork);
+	printf("%lli %i has taken a fork\n", ft_get_current_time(philosopher->table->start_time), philosopher->id);
+
+	pthread_mutex_lock(philosopher->right_fork);
+	printf("%lli %i has taken a fork\n", ft_get_current_time(philosopher->table->start_time), philosopher->id);
+	pthread_mutex_unlock(philosopher->left_fork);
+	pthread_mutex_unlock(philosopher->right_fork);
+	usleep(10);
+//	while (ft_all_ok(philosopher))
+//	{
+//		ft_take_forks();
+//		ft_eating();
+//		ft_release_forks();
+//		ft_sleep();
+//		ft_thinking();
+//	}
 	return (NULL);
 }
 
@@ -74,16 +92,17 @@ void	ft_cycle_of_live(t_table *table)
 	ft_clear_table(philosophers, forks, table);
 }
 
+/*
 static void	ft_leaks(void)
 {
 	system("leaks -q philo");
 }
-
+*/
 int	main(int argc, char **argv)
 {
 	t_table	table;
 
-	atexit(ft_leaks);
+	//atexit(ft_leaks);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)

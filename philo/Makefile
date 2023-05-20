@@ -5,7 +5,7 @@ SRCS=	main.c	\
 
 OBJS=	${SRCS:.c=.o}
 
-GCC=	gcc -Wall -Werror -Wextra
+GCC=	gcc -Wall -Werror -Wextra -pthread
 
 NAME=	philo
 
