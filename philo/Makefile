@@ -1,11 +1,12 @@
-SRCS=	main.c	\
-		utils.c	\
-		create.c\
-		clear_table.c
+SRCS=	main.c			\
+		utils.c			\
+		create.c		\
+		clear_table.c	\
+		actions.c
 
 OBJS=	${SRCS:.c=.o}
 
-GCC=	gcc -Wall -Werror -Wextra -pthread
+GCC=	gcc -Wall -Werror -Wextra -pthread -D _BSD_SOURCE
 
 NAME=	philo
 

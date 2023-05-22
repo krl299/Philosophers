@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/20 20:52:59 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/22 15:03:53 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,35 +41,40 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 
 void	*ft_philosophers_thread(void *arg)
 {
-	t_philosopher *philosopher;
+	t_philosopher *philo;
 	long long	time;
 
-	philosopher = (t_philosopher *)arg;
-	philosopher->last_meal_time = ft_get_time();
-	time = philosopher->last_meal_time - philosopher->table->start_time;
+	philo = (t_philosopher *)arg;
+	philo->last_meal_time = ft_get_time();
+	time = philo->last_meal_time - philo->table->start_time;
 	while (time < 0)
 	{
-		time = ft_get_current_time(philosopher->table->start_time);
-		philosopher->last_meal_time = time;
+		time = ft_get_current_time(philo->table->start_time);
+		philo->last_meal_time = time;
 	}
-	printf("Philosopher %i is here with time: %lli!!\n", philosopher->id, time);
-	
-	pthread_mutex_lock(philosopher->left_fork);
-	printf("%lli %i has taken a fork\n", ft_get_current_time(philosopher->table->start_time), philosopher->id);
-
-	pthread_mutex_lock(philosopher->right_fork);
-	printf("%lli %i has taken a fork\n", ft_get_current_time(philosopher->table->start_time), philosopher->id);
-	pthread_mutex_unlock(philosopher->left_fork);
-	pthread_mutex_unlock(philosopher->right_fork);
-	usleep(10);
-//	while (ft_all_ok(philosopher))
-//	{
-//		ft_take_forks();
-//		ft_eating();
-//		ft_release_forks();
-//		ft_sleep();
-//		ft_thinking();
-//	}
+//	printf("Philosopher %i is here with time: %lli!!\n", philo->id, time);
+	//printf("Philosopher %i Status %i!!\n", philo->id, philo->status);
+//	printf("Philosopher %i forks %i!!\n", philo->id, philo->forks);
+	while (1)
+	{
+		if (philo->status == THINKING)
+		{
+			ft_eat(philo);
+			philo->status += 1;
+		}
+		else if (philo->status == EATING)
+		{
+			ft_sleep(philo);
+			philo->status += 1;
+		}
+		else if (philo->status == SLEEPING)
+		{
+			ft_think(philo);
+			philo->status = THINKING;			
+		}
+		else if (philo->status == DEAD)
+			printf("%lli %i is died\n", ft_get_current_time(philo->table->start_time), philo->id);
+	}
 	return (NULL);
 }
 
@@ -92,17 +97,17 @@ void	ft_cycle_of_live(t_table *table)
 	ft_clear_table(philosophers, forks, table);
 }
 
-/*
+
 static void	ft_leaks(void)
 {
 	system("leaks -q philo");
 }
-*/
+
 int	main(int argc, char **argv)
 {
 	t_table	table;
 
-	//atexit(ft_leaks);
+	atexit(ft_leaks);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)
