@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/22 15:03:53 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/23 16:40:03 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,62 +39,29 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		table->wrong_input = 1;
 }
 
-void	*ft_philosophers_thread(void *arg)
+void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers)
 {
-	t_philosopher *philo;
-	long long	time;
+	int	i;
 
-	philo = (t_philosopher *)arg;
-	philo->last_meal_time = ft_get_time();
-	time = philo->last_meal_time - philo->table->start_time;
-	while (time < 0)
-	{
-		time = ft_get_current_time(philo->table->start_time);
-		philo->last_meal_time = time;
-	}
-//	printf("Philosopher %i is here with time: %lli!!\n", philo->id, time);
-	//printf("Philosopher %i Status %i!!\n", philo->id, philo->status);
-//	printf("Philosopher %i forks %i!!\n", philo->id, philo->forks);
-	while (1)
-	{
-		if (philo->status == THINKING)
-		{
-			ft_eat(philo);
-			philo->status += 1;
-		}
-		else if (philo->status == EATING)
-		{
-			ft_sleep(philo);
-			philo->status += 1;
-		}
-		else if (philo->status == SLEEPING)
-		{
-			ft_think(philo);
-			philo->status = THINKING;			
-		}
-		else if (philo->status == DEAD)
-			printf("%lli %i is died\n", ft_get_current_time(philo->table->start_time), philo->id);
-	}
-	return (NULL);
-}
-
-void	ft_cycle_of_live(t_table *table)
-{
-	t_philosopher		*philosophers;
-	pthread_mutex_t		*forks;
-	int					i;
-
-	forks = NULL;
-	philosophers = NULL;
-	forks = ft_create_forks(table, forks);
-	philosophers = ft_create_philosophers(table, philosophers, forks);
+	
+	table->start_time = ft_get_time() + (table->num_philosophers * 20);
 	i = 0;
+	if (table->num_philosophers == 1)
+	{
+		table->start_time = ft_get_time();
+		if(pthread_create(&philosophers[i].thread, NULL, \
+		(void *)ft_single_philo_thread, &philosophers[i]) != 0)
+			printf("Error creating thread.");
+		pthread_join(philosophers[i].thread, NULL);
+		return ;
+	}
 	while (i < table->num_philosophers)
 	{
+		pthread_create(&philosophers[i].thread, NULL, \
+		(void *)ft_philosophers_thread, &philosophers[i]);
 		pthread_join(philosophers[i].thread, NULL);
 		i++;
 	}
-	ft_clear_table(philosophers, forks, table);
 }
 
 
@@ -105,7 +72,9 @@ static void	ft_leaks(void)
 
 int	main(int argc, char **argv)
 {
-	t_table	table;
+	t_table			table;
+	pthread_mutex_t	*forks;
+	t_philosopher	*philosophers;
 
 	atexit(ft_leaks);
 	table.wrong_input = 0;
@@ -115,6 +84,11 @@ int	main(int argc, char **argv)
 		ft_wrong_input();
 		return (1);
 	}
-	ft_cycle_of_live(&table);
+	forks = NULL;
+	forks = ft_create_forks(&table, forks);
+	philosophers = NULL;
+	philosophers = ft_create_philosophers(&table, philosophers, forks);
+	ft_cycle_of_live(&table, philosophers);
+	ft_clear_table(philosophers, forks, &table);
 	return (0);
 }

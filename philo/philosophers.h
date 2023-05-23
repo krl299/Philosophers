@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:59:05 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/22 13:37:33 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/23 13:24:56 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,11 @@ typedef struct s_philosopher
 	int				status;
 	int				eat_count;
 	pthread_t		thread;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
+	pthread_mutex_t	*left_fork_mutex;
+	pthread_mutex_t	*right_fork_mutex;
 	int				forks;
 	long long		last_meal_time;
+	pthread_mutex_t	*table_mutex;
 	t_table			*table;
 }	t_philosopher;
 
@@ -49,16 +50,15 @@ typedef struct s_table
 	int				num_times_to_eat;
 	int				wrong_input;
 	long long		start_time;
-	pthread_mutex_t	*filled_philo;
 	int				filled_philosophers;
-	pthread_mutex_t	*death_philo;
 	int				deaths;
 }	t_table;
 
 //	MAIN.C
 void		ft_check_arg(t_table *table, int argc, char *argv);
-void		ft_cycle_of_live(t_table *table);
+void		ft_cycle_of_live(t_table *table, t_philosopher *philosophers);
 void		*ft_philosophers_thread(void *arg);
+void		*ft_single_philo_thread(void *arg);
 
 //	CREATE.C
 void		*ft_create_forks(t_table *table, pthread_mutex_t *forks);
