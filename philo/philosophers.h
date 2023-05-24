@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:59:05 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/23 13:24:56 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/24 17:11:31 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ typedef struct s_philosopher
 	pthread_mutex_t	*right_fork_mutex;
 	int				forks;
 	long long		last_meal_time;
-	pthread_mutex_t	*table_mutex;
 	t_table			*table;
 }	t_philosopher;
 
@@ -50,8 +49,9 @@ typedef struct s_table
 	int				num_times_to_eat;
 	int				wrong_input;
 	long long		start_time;
-	int				filled_philosophers;
+	int				filled;
 	int				deaths;
+	pthread_mutex_t	*table_mutex;
 }	t_table;
 
 //	MAIN.C

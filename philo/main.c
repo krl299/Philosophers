@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/23 16:40:03 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/24 17:26:41 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		else
 			table->num_times_to_eat = -1;
 		table->deaths = 0;
-		printf("deaths:%d\n", table->deaths);
 	}
 	else
 		table->wrong_input = 1;
@@ -42,7 +41,6 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers)
 {
 	int	i;
-
 	
 	table->start_time = ft_get_time() + (table->num_philosophers * 20);
 	i = 0;
@@ -59,6 +57,11 @@ void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers)
 	{
 		pthread_create(&philosophers[i].thread, NULL, \
 		(void *)ft_philosophers_thread, &philosophers[i]);
+		i++;
+	}
+	i = 0;
+	while (i < table->num_philosophers)
+	{
 		pthread_join(philosophers[i].thread, NULL);
 		i++;
 	}
@@ -88,6 +91,7 @@ int	main(int argc, char **argv)
 	forks = ft_create_forks(&table, forks);
 	philosophers = NULL;
 	philosophers = ft_create_philosophers(&table, philosophers, forks);
+	table.filled = 0;
 	ft_cycle_of_live(&table, philosophers);
 	ft_clear_table(philosophers, forks, &table);
 	return (0);

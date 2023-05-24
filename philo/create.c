@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 09:59:50 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/23 13:22:39 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/24 13:02:46 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "philosophers.h"
@@ -39,7 +39,12 @@ void	*ft_create_philosophers(t_table *table, \
 	while (i < table->num_philosophers)
 	{
 		philosophers[i].id = i + 1;
-		philosophers[i].status = THINKING;
+		if (philosophers[i].id % 2)
+		{
+			philosophers[i].status = THINKING;
+		}
+		else
+			philosophers[i].status = 0;
 		philosophers[i].eat_count = 0;
 		philosophers[i].left_fork_mutex = &forks[i];
 		philosophers[i].right_fork_mutex = &forks[(i + 1) % table->num_philosophers];
