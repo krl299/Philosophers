@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/24 17:26:41 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:31:30 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		table->wrong_input = 1;
 }
 
-void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers)
+void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers, pthread_mutex_t *forks)
 {
 	int	i;
 	
@@ -63,10 +63,12 @@ void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers)
 	while (i < table->num_philosophers)
 	{
 		pthread_join(philosophers[i].thread, NULL);
+		printf("termina hilo\n");
+		ft_clear_table(philosophers, forks, table);
+		break;
 		i++;
 	}
 }
-
 
 static void	ft_leaks(void)
 {
@@ -80,6 +82,10 @@ int	main(int argc, char **argv)
 	t_philosopher	*philosophers;
 
 	atexit(ft_leaks);
+	table.table_mutex = malloc(sizeof(pthread_mutex_t));
+	table.table_wr_mutex = malloc(sizeof(pthread_mutex_t));
+	pthread_mutex_init(table.table_mutex, NULL);
+	pthread_mutex_init(table.table_wr_mutex, NULL);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)
@@ -92,7 +98,6 @@ int	main(int argc, char **argv)
 	philosophers = NULL;
 	philosophers = ft_create_philosophers(&table, philosophers, forks);
 	table.filled = 0;
-	ft_cycle_of_live(&table, philosophers);
-	ft_clear_table(philosophers, forks, &table);
+	ft_cycle_of_live(&table, philosophers, forks);
 	return (0);
 }

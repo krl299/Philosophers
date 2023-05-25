@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/19 10:28:08 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/19 16:37:45 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/25 14:18:44 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,4 +30,8 @@ void	ft_clear_table(t_philosopher *philosophers, \
 {
 	ft_free_forks(forks, table);
 	free(philosophers);
+	pthread_mutex_destroy(table->table_mutex);
+	pthread_mutex_destroy(table->table_wr_mutex);
+	free(table->table_mutex);
+	free(table->table_wr_mutex);
 }
