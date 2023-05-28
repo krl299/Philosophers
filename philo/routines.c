@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 13:25:55 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/25 14:24:48 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/28 20:24:10 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,10 @@ void	*ft_philosophers_thread(void *arg)
 //	printf("Philosopher %i is here with time: %lli!!\n", philo->id, time);
 //	printf("Philosopher %i forks %i!!\n", philo->id, philo->forks);
 //	printf("Philosopher %i Status %i!!\n", philo->id, philo->status);
-	//printf("Philosopher %i\teated %i at %lld\tPhilosophers filled %i!!\n", philo->id, philo->eat_count, philo->last_meal_time, philo->table->filled);
-	while (ft_alive(philo))
-	{
 //	printf("Philosopher %i\teated %i at %lld\tPhilosophers filled %i!!\n", philo->id, philo->eat_count, philo->last_meal_time, philo->table->filled);
+	while (ft_alive(philo) == 1)
+	{
+//	printf("dead_time id=%d :%d\n", philo->id,  philo->dead_time);
 		if (philo->status == THINKING)
 		{
 			ft_eat(philo);
@@ -74,12 +74,6 @@ void	*ft_philosophers_thread(void *arg)
 			philo->status = THINKING;
 			usleep(100);
 		}
-	}
-	if (philo->status == DEAD)
-	{
-//		pthread_mutex_lock(philo->table->table_wr_mutex);
-		printf("%lli %i is died\n", ft_get_current_time(philo->table->start_time), philo->id);
-//		pthread_mutex_unlock(philo->table->table_wr_mutex);
 	}
 	return (NULL);
 }

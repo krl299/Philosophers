@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/25 14:31:30 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/28 17:06:51 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,10 @@ void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers, pthread_mutex
 	}
 	while (i < table->num_philosophers)
 	{
+		table->table_mutex = malloc(sizeof(pthread_mutex_t));
+		table->table_wr_mutex = malloc(sizeof(pthread_mutex_t));
+		pthread_mutex_init(table->table_mutex, NULL);
+		pthread_mutex_init(table->table_wr_mutex, NULL);
 		pthread_create(&philosophers[i].thread, NULL, \
 		(void *)ft_philosophers_thread, &philosophers[i]);
 		i++;
@@ -63,11 +67,9 @@ void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers, pthread_mutex
 	while (i < table->num_philosophers)
 	{
 		pthread_join(philosophers[i].thread, NULL);
-		printf("termina hilo\n");
-		ft_clear_table(philosophers, forks, table);
-		break;
 		i++;
 	}
+	ft_clear_table(philosophers, forks, table);
 }
 
 static void	ft_leaks(void)
@@ -82,10 +84,6 @@ int	main(int argc, char **argv)
 	t_philosopher	*philosophers;
 
 	atexit(ft_leaks);
-	table.table_mutex = malloc(sizeof(pthread_mutex_t));
-	table.table_wr_mutex = malloc(sizeof(pthread_mutex_t));
-	pthread_mutex_init(table.table_mutex, NULL);
-	pthread_mutex_init(table.table_wr_mutex, NULL);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)

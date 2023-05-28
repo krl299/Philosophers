@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:59:05 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/25 14:29:51 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/28 19:45:40 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ typedef struct s_philosopher
 	int				id;
 	int				status;
 	int				eat_count;
+	int				dead_time;
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork_mutex;
 	pthread_mutex_t	*right_fork_mutex;
-	int				forks;
 	long long		last_meal_time;
 	t_table			*table;
 }	t_philosopher;
