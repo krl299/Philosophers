@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 13:25:55 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/28 20:24:10 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 15:11:25 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,19 @@ void	*ft_single_philo_thread(void *arg)
 	while (philo->table->start_time < ft_get_time())
 		usleep(10);
 	pthread_mutex_lock(philo->left_fork_mutex);
-	printf("%lli %i has taken a fork\n", ft_get_current_time(philo->table->start_time), philo->id);
+	printf("%lli %i has taken a fork\n",
+		ft_get_current_time(philo->table->start_time), philo->id);
 	usleep(philo->last_meal_time + philo->table->time_to_die * 1000);
-	printf("%lli %i is died\n", ft_get_current_time(philo->table->start_time), philo->id);
+	printf("%lli %i is died\n",
+		ft_get_current_time(philo->table->start_time), philo->id);
 	return (NULL);
 }
 
+// funcion muy larga
 void	*ft_philosophers_thread(void *arg)
 {
-	t_philosopher *philo;
-	long long	time;
+	t_philosopher	*philo;
+	long long		time;
 
 	philo = (t_philosopher *)arg;
 	if (philo->table->time_to_die == 0)
@@ -45,15 +48,8 @@ void	*ft_philosophers_thread(void *arg)
 		time = ft_get_current_time(philo->table->start_time);
 		philo->last_meal_time = ft_get_current_time(philo->table->start_time);
 	}
-//	printf("Start time = %lld\n", philo->table->start_time);
-//	printf("Current time =  %lld\n", ft_get_current_time(philo->table->start_time));
-//	printf("Philosopher %i is here with time: %lli!!\n", philo->id, time);
-//	printf("Philosopher %i forks %i!!\n", philo->id, philo->forks);
-//	printf("Philosopher %i Status %i!!\n", philo->id, philo->status);
-//	printf("Philosopher %i\teated %i at %lld\tPhilosophers filled %i!!\n", philo->id, philo->eat_count, philo->last_meal_time, philo->table->filled);
 	while (ft_alive(philo) == 1)
 	{
-//	printf("dead_time id=%d :%d\n", philo->id,  philo->dead_time);
 		if (philo->status == THINKING)
 		{
 			ft_eat(philo);
@@ -67,7 +63,7 @@ void	*ft_philosophers_thread(void *arg)
 		else if (philo->status == SLEEPING)
 		{
 			ft_think(philo);
-			philo->status = THINKING;			
+			philo->status = THINKING;
 		}
 		if (philo->status == 0)
 		{

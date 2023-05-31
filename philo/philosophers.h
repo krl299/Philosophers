@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:59:05 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/28 19:45:40 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 15:08:35 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,12 @@ typedef struct s_table
 	int				filled;
 	int				deaths;
 	pthread_mutex_t	*table_mutex;
-	pthread_mutex_t	*table_wr_mutex;
 }	t_table;
 
 //	MAIN.C
 void		ft_check_arg(t_table *table, int argc, char *argv);
-void		ft_cycle_of_live(t_table *table, t_philosopher *philosophers, pthread_mutex_t *forks);
+void		ft_cycle_of_live(t_table *table, t_philosopher *philosophers,
+				pthread_mutex_t *forks);
 void		*ft_philosophers_thread(void *arg);
 void		*ft_single_philo_thread(void *arg);
 
@@ -70,10 +70,10 @@ void		*ft_create_philosophers(t_table *table, \
 void		ft_clear_table(t_philosopher *philosophers, \
 		pthread_mutex_t *forks, t_table *table);
 //	ACTIONS.C
-void		ft_eat();
-void		ft_sleep();
-void		ft_think();
-int			ft_alive();
+void		ft_eat(t_philosopher *philo);
+void		ft_sleep(t_philosopher *philo);
+void		ft_think(t_philosopher *philo);
+int			ft_alive(t_philosopher *philo);
 
 //	UTILS.C
 int			ft_atoi(char *str, t_table *table);

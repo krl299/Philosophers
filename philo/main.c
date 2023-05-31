@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/28 17:06:51 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 16:28:38 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,31 +38,42 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		table->wrong_input = 1;
 }
 
-void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers, pthread_mutex_t *forks)
+// funcion muy larga
+void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers,
+		pthread_mutex_t *forks)
 {
 	int	i;
-	
+
 	table->start_time = ft_get_time() + (table->num_philosophers * 20);
+	table->table_mutex = malloc(sizeof(pthread_mutex_t));
 	i = 0;
 	if (table->num_philosophers == 1)
 	{
 		table->start_time = ft_get_time();
-		if(pthread_create(&philosophers[i].thread, NULL, \
+		if (pthread_create(&philosophers[i].thread, NULL, \
 		(void *)ft_single_philo_thread, &philosophers[i]) != 0)
 			printf("Error creating thread.");
 		pthread_join(philosophers[i].thread, NULL);
+		ft_clear_table(philosophers, forks, table);
 		return ;
 	}
 	while (i < table->num_philosophers)
 	{
-		table->table_mutex = malloc(sizeof(pthread_mutex_t));
-		table->table_wr_mutex = malloc(sizeof(pthread_mutex_t));
 		pthread_mutex_init(table->table_mutex, NULL);
-		pthread_mutex_init(table->table_wr_mutex, NULL);
 		pthread_create(&philosophers[i].thread, NULL, \
 		(void *)ft_philosophers_thread, &philosophers[i]);
 		i++;
 	}
+	while(1)
+	{
+		if (i == table->num_philosophers)
+			i = 0;
+		if (ft_alive(&philosophers[i]) == 0)
+			break ;
+		usleep(500);
+		i++;
+	}
+	usleep(1500);
 	i = 0;
 	while (i < table->num_philosophers)
 	{
