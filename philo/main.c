@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 09:57:13 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/31 16:28:38 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 18:25:33 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,29 @@ void	ft_check_args(t_table *table, int argc, char **argv)
 		table->wrong_input = 1;
 }
 
-// funcion muy larga
+static void	ft_wait_till_end(t_table *table, t_philosopher *philosophers)
+{
+	int	i;
+
+	i = 0;
+	while (1)
+	{
+		if (i == table->num_philosophers)
+			i = 0;
+		if (ft_alive(&philosophers[i]) == 0)
+			break ;
+		usleep(500);
+		i++;
+	}
+	usleep(1500);
+	i = 0;
+	while (i < table->num_philosophers)
+	{
+		pthread_join(philosophers[i].thread, NULL);
+		i++;
+	}
+}
+
 void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers,
 		pthread_mutex_t *forks)
 {
@@ -64,37 +86,22 @@ void	ft_cycle_of_live(t_table *table, t_philosopher *philosophers,
 		(void *)ft_philosophers_thread, &philosophers[i]);
 		i++;
 	}
-	while(1)
-	{
-		if (i == table->num_philosophers)
-			i = 0;
-		if (ft_alive(&philosophers[i]) == 0)
-			break ;
-		usleep(500);
-		i++;
-	}
-	usleep(1500);
-	i = 0;
-	while (i < table->num_philosophers)
-	{
-		pthread_join(philosophers[i].thread, NULL);
-		i++;
-	}
+	ft_wait_till_end(table, philosophers);
 	ft_clear_table(philosophers, forks, table);
 }
 
-static void	ft_leaks(void)
+/*static void	ft_leaks(void)
 {
 	system("leaks -q philo");
 }
-
+	atexit(ft_leaks);
+*/
 int	main(int argc, char **argv)
 {
 	t_table			table;
 	pthread_mutex_t	*forks;
 	t_philosopher	*philosophers;
 
-	atexit(ft_leaks);
 	table.wrong_input = 0;
 	ft_check_args(&table, argc, argv);
 	if (argc < 5 || argc > 6 || table.wrong_input == 1)

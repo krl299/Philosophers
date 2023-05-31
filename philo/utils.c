@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/18 12:39:22 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/20 18:33:06 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 18:40:58 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,46 @@ long long	ft_get_time(void)
 long long	ft_get_current_time(long long time)
 {
 	return (ft_get_time() - time);
+}
+
+void	ft_time_action(t_philosopher *philo, int time)
+{
+	long long int	time_end_action;
+
+	time_end_action = ft_get_current_time(philo->table->start_time) + time;
+	while (ft_get_current_time(philo->table->start_time) < time_end_action)
+	{
+		if (ft_alive(philo) == 0)
+			break ;
+		usleep(500);
+	}
+}
+
+void	ft_print_action(t_philosopher *philo, int action)
+{
+	if (action == 0)
+	{
+		printf("%lli %i has taken a fork\n",
+			ft_get_current_time(philo->table->start_time), philo->id);
+	}
+	else if (action == 1)
+	{
+		printf("%lli %i is eating\n",
+			ft_get_current_time(philo->table->start_time), philo->id);
+	}
+	else if (action == 2)
+	{
+		printf("%lli %i is sleeping\n",
+			ft_get_current_time(philo->table->start_time), philo->id);
+	}
+	else if (action == 3)
+	{
+		printf("%lli %i is thinking\n",
+			ft_get_current_time(philo->table->start_time), philo->id);
+	}
+	else if (action == 4)
+	{
+		printf("%lli %i died\n",
+			ft_get_current_time(philo->table->start_time), philo->id);
+	}
 }

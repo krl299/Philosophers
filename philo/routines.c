@@ -6,7 +6,7 @@
 /*   By: cmoran-l <cmoran-l@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/23 13:25:55 by cmoran-l          #+#    #+#             */
-/*   Updated: 2023/05/31 15:11:25 by cmoran-l         ###   ########.fr       */
+/*   Updated: 2023/05/31 17:32:59 by cmoran-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,30 @@ void	*ft_single_philo_thread(void *arg)
 	return (NULL);
 }
 
+static void	ft_do_action(t_philosopher *philo)
+{
+	if (philo->status == THINKING)
+	{
+		ft_eat(philo);
+		philo->status += 1;
+	}
+	else if (philo->status == EATING)
+	{
+		ft_sleep(philo);
+		philo->status += 1;
+	}
+	else if (philo->status == SLEEPING)
+	{
+		ft_think(philo);
+		philo->status = THINKING;
+	}
+	if (philo->status == 0)
+	{
+		philo->status = THINKING;
+		usleep(100);
+	}
+}
+
 // funcion muy larga
 void	*ft_philosophers_thread(void *arg)
 {
@@ -50,26 +74,7 @@ void	*ft_philosophers_thread(void *arg)
 	}
 	while (ft_alive(philo) == 1)
 	{
-		if (philo->status == THINKING)
-		{
-			ft_eat(philo);
-			philo->status += 1;
-		}
-		else if (philo->status == EATING)
-		{
-			ft_sleep(philo);
-			philo->status += 1;
-		}
-		else if (philo->status == SLEEPING)
-		{
-			ft_think(philo);
-			philo->status = THINKING;
-		}
-		if (philo->status == 0)
-		{
-			philo->status = THINKING;
-			usleep(100);
-		}
+		ft_do_action(philo);
 	}
 	return (NULL);
 }
